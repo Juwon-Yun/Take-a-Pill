@@ -7,6 +7,8 @@ import 'package:flutter_app/components/custom_page_route.dart';
 import 'package:flutter_app/pages/add_medicine/add_alarm_page.dart';
 import 'package:image_picker/image_picker.dart';
 
+import 'components/add_page_widget.dart';
+
 class AddPage extends StatefulWidget {
   const AddPage({Key? key}) : super(key: key);
 
@@ -32,18 +34,7 @@ class _AddPageState extends State<AddPage> {
       appBar: AppBar(
         leading: const CloseButton(),
       ),
-      body: GestureDetector(
-        onTap: (){
-          FocusScope.of(context).unfocus();
-        },
-        // 키보드가 올라왔을 때 공간이 모자라면 overflow가 나타난다
-        // 그래서 scroll 가능한 위젯으로 만든다.
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: pagePadding,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+      body: AddPageBody(children: [
                 // const SizedBox(height: largeSpace,),
                 Text(
                   '어떤 약이에요?',
@@ -84,9 +75,6 @@ class _AddPageState extends State<AddPage> {
                 ),
               ],
             ),
-          ),
-        ),
-      ),
       bottomNavigationBar: SafeArea(
         child: Padding(
           padding: submitButtonBoxPadding,
@@ -121,6 +109,8 @@ class _AddPageState extends State<AddPage> {
     );
   }
 }
+
+
 
 class MedicineImageButton extends StatefulWidget {
   const MedicineImageButton({Key? key, required this.changeImageFile}) : super(key: key);
