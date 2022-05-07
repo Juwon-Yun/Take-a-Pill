@@ -136,7 +136,7 @@ class TimePickerBottomSheet extends StatelessWidget {
             child: SizedBox(
               height: submitButtonHeight,
               child: ElevatedButton(
-                onPressed: (){},
+                onPressed: ()=> Navigator.pop(context),
                 child: const Text('취소'),
                 style: ElevatedButton.styleFrom(textStyle: Theme.of(context).textTheme.subtitle1, primary: Colors.white, onPrimary: CustomColors.primaryColor),
               ),

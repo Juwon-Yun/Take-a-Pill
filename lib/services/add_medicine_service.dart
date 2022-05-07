@@ -23,4 +23,11 @@ class AddMedicineService with ChangeNotifier{
     _alarms.remove(alarmTime);
     notifyListeners();
   }
+
+  // timer를 수정하는 기능, update다.
+  void setAlarm({required String prevTime, required DateTime setTime}){
+    _alarms.remove(prevTime);
+    _alarms.add(DateFormat('HH:mm').format(setTime));
+    notifyListeners();
+  }
 }
