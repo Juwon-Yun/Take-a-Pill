@@ -69,6 +69,12 @@ class _AddPageState extends State<AddPage> {
                     hintStyle: Theme.of(context).textTheme.bodyText2,
                     contentPadding: textFieldContentPadding,
                   ),
+                  // 입력창 변할 때
+                  onChanged: (_){
+                    setState(() {
+                        // onChanged, setState 빈칸 만으로 _nameController.text값이 렌더링된다.
+                    });
+                  },
                 ),
               ],
             ),
@@ -83,7 +89,7 @@ class _AddPageState extends State<AddPage> {
             child: ElevatedButton(
               child: Text('다음'),
               style: ElevatedButton.styleFrom(textStyle: Theme.of(context).textTheme.subtitle1),
-              onPressed: (){},
+              onPressed: _nameController.text.isEmpty ? null : (){},
             ),
           ),
         ),
