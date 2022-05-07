@@ -2,7 +2,9 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_app/components/custom_colors.dart';
 import 'package:flutter_app/components/custom_constants.dart';
+import 'package:flutter_app/components/custom_widget.dart';
 
 import 'components/add_page_widget.dart';
 
@@ -33,8 +35,8 @@ class AddAlarmPage extends StatelessWidget {
             ],
           ))
         ],
-        
       ),
+      bottomNavigationBar: BottomSubmitButton(onPressed: (){}, text: '완료'),
     );
   }
 }
@@ -44,6 +46,8 @@ class AlarmBox extends StatelessWidget {
     Key? key,
   }) : super(key: key);
 
+  // DateTime dateTime = DateTime.now();
+
   @override
   Widget build(BuildContext context) {
     return TextButton(
@@ -52,7 +56,51 @@ class AlarmBox extends StatelessWidget {
       child: Row(
         children: [
           Expanded(flex: 1, child: IconButton(onPressed: (){}, icon: const Icon(CupertinoIcons.minus_circled))),
-          Expanded(flex: 5, child: TextButton(onPressed: (){}, child: const Text('18:00'))),
+          Expanded(
+              flex: 5,
+              child: TextButton(
+                onPressed: (){
+                showModalBottomSheet(context: context, builder: (context){
+                  return BottomSheetBody(children: [
+                    SizedBox(
+                      height: 200,
+                      child: CupertinoDatePicker(onDateTimeChanged: (dateTime){}, mode: CupertinoDatePickerMode.time,)
+                    ),
+                    const SizedBox(width: regularSpace,),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: SizedBox(
+                            height: submitButtonHeight,
+                            child: ElevatedButton(
+                              onPressed: (){},
+                              child: Text("취소"),
+                              style: ElevatedButton.styleFrom(textStyle: Theme.of(context).textTheme.subtitle1, primary: Colors.white, onPrimary: CustomColors.primaryColor),
+                            ),
+                          ),
+                        ),
+                        // 간격 벌리기
+                        const SizedBox(width: smallSpace,),
+                        Expanded(
+                          child: SizedBox(
+                            height: submitButtonHeight,
+                            child: ElevatedButton(
+                              onPressed: (){},
+                              child: Text("확인"),
+                              style: ElevatedButton.styleFrom(textStyle: Theme.of(context).textTheme.subtitle1),
+                            ),
+                          ),
+                        ),
+
+                      ],
+                    )
+                  ]);
+                });
+            // }, child: const Text('18:00'))),
+              },
+              child: const Text('18:00')
+            )
+          ),
         ],
       ),
     );

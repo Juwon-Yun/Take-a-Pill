@@ -25,3 +25,29 @@ class AddPageBody extends StatelessWidget {
     );
   }
 }
+
+class BottomSubmitButton extends StatelessWidget {
+  const BottomSubmitButton({Key? key, required this.onPressed, required this.text}) : super(key: key);
+
+  final VoidCallback? onPressed;
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Padding(
+        padding: submitButtonBoxPadding,
+        child: SizedBox(
+          height: submitButtonHeight,
+          child: ElevatedButton(
+            // child: const Text('다음'),
+            child: Text(text),
+            style: ElevatedButton.styleFrom(textStyle: Theme.of(context).textTheme.subtitle1),
+            // onPressed: _nameController.text.isEmpty ? null : _onAddAlarmPage,
+            onPressed: onPressed,
+          ),
+        ),
+      ),
+    );
+  }
+}

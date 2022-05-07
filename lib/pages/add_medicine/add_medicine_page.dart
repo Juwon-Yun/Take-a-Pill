@@ -7,6 +7,7 @@ import 'package:flutter_app/components/custom_page_route.dart';
 import 'package:flutter_app/pages/add_medicine/add_alarm_page.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../../components/custom_widget.dart';
 import 'components/add_page_widget.dart';
 
 class AddPage extends StatefulWidget {
@@ -77,19 +78,7 @@ class _AddPageState extends State<AddPage> {
                 ],
               ),
       ),
-      bottomNavigationBar: SafeArea(
-        child: Padding(
-          padding: submitButtonBoxPadding,
-          child: SizedBox(
-            height: submitButtonHeight,
-            child: ElevatedButton(
-              child: const Text('다음'),
-              style: ElevatedButton.styleFrom(textStyle: Theme.of(context).textTheme.subtitle1),
-              onPressed: _nameController.text.isEmpty ? null : _onAddAlarmPage,
-            ),
-          ),
-        ),
-      ),
+      bottomNavigationBar: BottomSubmitButton(onPressed: _nameController.text.isEmpty ? null : _onAddAlarmPage, text: '다음',)
     );
   }
   void _onAddAlarmPage(){
@@ -178,21 +167,15 @@ class PickImageBottomSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: pagePadding,
-      child: SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextButton(
-                onPressed: onPressedCamera,
-                child: const Text('카메라로 촬영')),
-            TextButton(
-                onPressed: onPressedGallery,
-                child: const Text('앨범에서 가져오기')),
-          ],
-        ),
-      ),
+    return BottomSheetBody(
+            children: [
+              TextButton(
+                  onPressed: onPressedCamera,
+                  child: const Text('카메라로 촬영')),
+              TextButton(
+                  onPressed: onPressedGallery,
+                  child: const Text('앨범에서 가져오기')),
+            ],
     );
   }
 }
