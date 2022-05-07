@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_app/components/custom_colors.dart';
+import 'package:flutter_app/pages/add/add_page.dart';
 
 class HomePage  extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -26,7 +28,13 @@ class _HomePageState extends State<HomePage> {
           appBar: AppBar(),
           body: _pages[_currentIdx],
           floatingActionButton: FloatingActionButton(
-            onPressed: (){},
+            onPressed: (){
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context)=> const AddPage())
+              );
+            },
             child: const Icon(CupertinoIcons.add),
           ),
           floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
@@ -41,14 +49,20 @@ class _HomePageState extends State<HomePage> {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   CupertinoButton(
-                      child: const Icon(CupertinoIcons.check_mark),
+                      child: Icon(
+                          CupertinoIcons.check_mark,
+                          color : _currentIdx == 0 ? CustomColors.primaryColor : Colors.grey[350],
+                      ),
                       onPressed: (){
                         setState(() {
                           _currentIdx = 0;
                         });
                       }),
                   CupertinoButton(
-                      child: const Icon(CupertinoIcons.check_mark_circled_solid),
+                      child: Icon(
+                          CupertinoIcons.check_mark_circled_solid,
+                          color : _currentIdx == 1 ? CustomColors.primaryColor : Colors.grey[350],
+                      ),
                       onPressed: (){
                         setState(() {
                           _currentIdx = 1;
