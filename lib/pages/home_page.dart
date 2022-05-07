@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/components/custom_colors.dart';
-import 'package:flutter_app/pages/add/add_page.dart';
+import 'package:flutter_app/pages/add_medicine/add_medicine_page.dart';
 import 'package:flutter_app/pages/history/history_page.dart';
 import 'package:flutter_app/pages/today/today_page.dart';
 
@@ -30,7 +30,7 @@ class _HomePageState extends State<HomePage> {
           appBar: AppBar(),
           body: _pages[_currentIdx],
           floatingActionButton: FloatingActionButton(
-            onPressed: _onAddMedicien,
+            onPressed: _onAddMedicine,
             child: const Icon(CupertinoIcons.add),
           ),
           floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
@@ -77,7 +77,7 @@ void _onCurrentPage(int pageIdx){
     });
 }
 
-void _onAddMedicien(){
+void _onAddMedicine(){
   Navigator.push(
       context,
       MaterialPageRoute(
