@@ -5,26 +5,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/components/custom_colors.dart';
 import 'package:flutter_app/components/custom_constants.dart';
 import 'package:flutter_app/components/custom_widget.dart';
+import 'package:flutter_app/services/add_medicine_service.dart';
 import 'package:intl/intl.dart';
 
 import 'components/add_page_widget.dart';
 
-class AddAlarmPage extends StatefulWidget {
-  const AddAlarmPage({Key? key, required this.medicineImage, required this.medicineName}) : super(key: key);
+class AddAlarmPage extends StatelessWidget {
+  AddAlarmPage({Key? key, required this.medicineImage, required this.medicineName}) : super(key: key);
 
   final File? medicineImage;
   final String medicineName;
 
-  @override
-  State<AddAlarmPage> createState() => _AddAlarmPageState();
-}
 
-class _AddAlarmPageState extends State<AddAlarmPage> {
-  final _alarms = <String>[
-    '08:00',
-    '13:00',
-    '19:00',
-  ];
+  final service = AddMedicineService();
 
   @override
   Widget build(BuildContext context) {
@@ -37,15 +30,22 @@ class _AddAlarmPageState extends State<AddAlarmPage> {
           // Text(medicineName),
         const SizedBox(height: largeSpace),
           // 기존에 SingleChildScrollView를 해놓아서 나머지 높이가 무제한 Expanded 되기 때문에 에러를 표시한다.
-          Expanded(child: ListView(
-            children: alarmWidgets,
-            // children: const [
-            //   AlarmBox(),
-            //   AlarmBox(),
-            //   AlarmBox(),
-            //   AlarmBox(),
-            //   AddAlarmButton(),
-            // ],
+          Expanded(child: AnimatedBuilder(
+            animation: service,
+            // widget parameter는 ignore
+            builder: (context, _) {
+
+              return ListView(
+                children: alarmWidgets,
+                // children: const [
+                //   AlarmBox(),
+                //   AlarmBox(),
+                //   AlarmBox(),
+                //   AlarmBox(),
+                //   AddAlarmButton(),
+                // ],
+              );
+            }
           ))
         ],
       ),
@@ -57,32 +57,39 @@ class _AddAlarmPageState extends State<AddAlarmPage> {
     final children = <Widget>[];
 
     children.addAll(
-      _alarms.map((alarmTime) => AlarmBox(
+      service.alarms.map((alarmTime) => AlarmBox(
           time:  alarmTime,
-          onPressedMinus: (){
-            setState(() {
-              _alarms.remove(alarmTime);
-            });
-          },)),
+          service: service,
+          // onPressedMinus: (){
+          //   setState(() {
+          //     service.alarms.remove(alarmTime);
+          //   });
+          // },
+      )),
     );
-    children.add(AddAlarmButton(onPressedAddAlarm: (){
-      final now = DateTime.now();
-      final nowTime = DateFormat('HH:mm').format(now);
-      setState(() {
-        _alarms.add(nowTime);
-      });
-    },));
+    children.add(
+      AddAlarmButton(service: service)
+      
+      // AddAlarmButton(onPressedAddAlarm: (){
+      //   final now = DateTime.now();
+      //   final nowTime = DateFormat('HH:mm').format(now);
+      //   setState(() {
+      //     _alarms.add(nowTime);
+      //   });
+      // },
+    
+    );
     return children;
   }
 }
 
 class AlarmBox extends StatelessWidget {
   const AlarmBox({
-    Key? key, required this.time, required this.onPressedMinus
+    Key? key, required this.time, required this.service
   }) : super(key: key);
 
   final String time;
-  final VoidCallback onPressedMinus;
+  final AddMedicineService service;
 
   @override
   Widget build(BuildContext context) {
@@ -93,7 +100,7 @@ class AlarmBox extends StatelessWidget {
       onPressed: (){},
       child: Row(
         children: [
-          Expanded(flex: 1, child: IconButton(onPressed: onPressedMinus, icon: const Icon(CupertinoIcons.minus_circled))),
+          Expanded(flex: 1, child: IconButton(onPressed: (){service.removeAlarm(time);}, icon: const Icon(CupertinoIcons.minus_circled))),
           Expanded(
               flex: 5,
               child: TextButton(
@@ -156,16 +163,16 @@ class TimePickerBottomSheet extends StatelessWidget {
 
 class AddAlarmButton extends StatelessWidget {
   const AddAlarmButton({
-    Key? key, required this.onPressedAddAlarm
+    Key? key, required this.service
   }) : super(key: key);
 
-  final VoidCallback onPressedAddAlarm;
+  final AddMedicineService service;
 
   @override
   Widget build(BuildContext context) {
     return TextButton(
       style: TextButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 6), textStyle: Theme.of(context).textTheme.subtitle1),
-      onPressed: onPressedAddAlarm,
+      onPressed: service.addNowAlarm,
       child: Row(
         children: const [
           Expanded(flex: 1, child: Icon(CupertinoIcons.plus_circled)),
