@@ -53,15 +53,52 @@ class _AddPageState extends State<AddPage> {
                     // 이미지가 없을떄 paading null, 있을 때 zero
                     padding: _pickedImage == null ? null : EdgeInsets.zero,
                     onPressed: (){
-                      // TODO : 에뮬레이터에서는 없으므로 gallery로 대체
-                      ImagePicker().pickImage(source: ImageSource.gallery)
-                      // ImagePicker().pickImage(source: ImageSource.camera)
-                      .then((value) {
-                        setState(() {
-                          if (value == null) return;
-                          _pickedImage = File(value.path);
-                        });
+                      showModalBottomSheet(context: context, builder: (context){
+                        return Padding(
+                          padding: pagePadding,
+                          child: SafeArea(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                TextButton(
+                                    onPressed: (){
+                                      ImagePicker().pickImage(source: ImageSource.camera).then((value){
+                                        setState(() {
+                                          if(value != null){
+                                            _pickedImage = File(value.path);
+                                          }
+                                          // 종료할것이 있으면 종료시킨다.
+                                          Navigator.maybePop(context);
+                                        });
+                                      });
+                                    },
+                                    child: const Text('카메라로 촬영')),
+                                TextButton(
+                                    onPressed: (){
+                                      ImagePicker().pickImage(source: ImageSource.gallery).then((value){
+                                        setState(() {
+                                          if(value != null){
+                                            _pickedImage = File(value.path);
+                                          }
+                                          Navigator.maybePop(context);
+                                        });
+                                      });
+                                    },
+                                    child: const Text('앨범에서 가져오기')),
+                              ],
+                            ),
+                          ),
+                        );
                       });
+                      // // TODO : 에뮬레이터에서는 없으므로 gallery로 대체
+                      // ImagePicker().pickImage(source: ImageSource.gallery)
+                      // // ImagePicker().pickImage(source: ImageSource.camera)
+                      // .then((value) {
+                      //   setState(() {
+                      //     if (value == null) return;
+                      //     _pickedImage = File(value.path);
+                      //   });
+                      // });
                     },
                     child: _pickedImage == null ? const Icon(
                       CupertinoIcons.photo_camera,
