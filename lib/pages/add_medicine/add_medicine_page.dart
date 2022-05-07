@@ -50,8 +50,12 @@ class _AddPageState extends State<AddPage> {
                 child: CircleAvatar(
                   radius: 40,
                   child: CupertinoButton(
+                    // 이미지가 없을떄 paading null, 있을 때 zero
+                    padding: _pickedImage == null ? null : EdgeInsets.zero,
                     onPressed: (){
-                      ImagePicker().pickImage(source: ImageSource.camera)
+                      // TODO : 에뮬레이터에서는 없으므로 gallery로 대체
+                      ImagePicker().pickImage(source: ImageSource.gallery)
+                      // ImagePicker().pickImage(source: ImageSource.camera)
                       .then((value) {
                         setState(() {
                           if (value == null) return;
