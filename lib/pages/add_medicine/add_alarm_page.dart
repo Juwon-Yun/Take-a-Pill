@@ -9,10 +9,15 @@ import 'package:flutter_app/components/custom_widget.dart';
 import 'components/add_page_widget.dart';
 
 class AddAlarmPage extends StatelessWidget {
-  const AddAlarmPage({Key? key, required this.medicineImage, required this.medicineName}) : super(key: key);
+  AddAlarmPage({Key? key, required this.medicineImage, required this.medicineName}) : super(key: key);
 
   final File? medicineImage;
   final String medicineName;
+  final alarms = <String>[
+    '08:00',
+    '13:00',
+    '19:00',
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -26,27 +31,37 @@ class AddAlarmPage extends StatelessWidget {
         const SizedBox(height: largeSpace),
           // 기존에 SingleChildScrollView를 해놓아서 나머지 높이가 무제한 Expanded 되기 때문에 에러를 표시한다.
           Expanded(child: ListView(
-            children: const [
-              AlarmBox(),
-              AlarmBox(),
-              AlarmBox(),
-              AlarmBox(),
-              AddAlarmButton(),
-            ],
+            children: alarmWidgets,
+            // children: const [
+            //   AlarmBox(),
+            //   AlarmBox(),
+            //   AlarmBox(),
+            //   AlarmBox(),
+            //   AddAlarmButton(),
+            // ],
           ))
         ],
       ),
       bottomNavigationBar: BottomSubmitButton(onPressed: (){}, text: '완료'),
     );
   }
+  List<Widget> get alarmWidgets {
+    final children = <Widget>[];
+
+    children.addAll(
+        alarms.map((alaramTime) => AlarmBox( time:  alaramTime,)),
+    );
+    children.add(AddAlarmButton());
+    return children;
+  }
 }
 
 class AlarmBox extends StatelessWidget {
   const AlarmBox({
-    Key? key,
+    Key? key, required this.time
   }) : super(key: key);
 
-  // DateTime dateTime = DateTime.now();
+  final String time;
 
   @override
   Widget build(BuildContext context) {
@@ -61,49 +76,57 @@ class AlarmBox extends StatelessWidget {
               child: TextButton(
                 onPressed: (){
                 showModalBottomSheet(context: context, builder: (context){
-                  return BottomSheetBody(children: [
-                    SizedBox(
-                      height: 200,
-                      child: CupertinoDatePicker(onDateTimeChanged: (dateTime){}, mode: CupertinoDatePickerMode.time,)
-                    ),
-                    const SizedBox(width: regularSpace,),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: SizedBox(
-                            height: submitButtonHeight,
-                            child: ElevatedButton(
-                              onPressed: (){},
-                              child: Text("취소"),
-                              style: ElevatedButton.styleFrom(textStyle: Theme.of(context).textTheme.subtitle1, primary: Colors.white, onPrimary: CustomColors.primaryColor),
-                            ),
-                          ),
-                        ),
-                        // 간격 벌리기
-                        const SizedBox(width: smallSpace,),
-                        Expanded(
-                          child: SizedBox(
-                            height: submitButtonHeight,
-                            child: ElevatedButton(
-                              onPressed: (){},
-                              child: Text("확인"),
-                              style: ElevatedButton.styleFrom(textStyle: Theme.of(context).textTheme.subtitle1),
-                            ),
-                          ),
-                        ),
-
-                      ],
-                    )
-                  ]);
+                  return const TimePickerBottomSheet();
                 });
             // }, child: const Text('18:00'))),
               },
-              child: const Text('18:00')
+              child: Text(time)
             )
           ),
         ],
       ),
     );
+  }
+}
+class TimePickerBottomSheet extends StatelessWidget {
+  const TimePickerBottomSheet({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return BottomSheetBody(children: [
+      SizedBox(
+          height: 200,
+          child: CupertinoDatePicker(onDateTimeChanged: (dateTime){}, mode: CupertinoDatePickerMode.time,)
+      ),
+      const SizedBox(width: regularSpace,),
+      Row(
+        children: [
+          Expanded(
+            child: SizedBox(
+              height: submitButtonHeight,
+              child: ElevatedButton(
+                onPressed: (){},
+                child: Text("취소"),
+                style: ElevatedButton.styleFrom(textStyle: Theme.of(context).textTheme.subtitle1, primary: Colors.white, onPrimary: CustomColors.primaryColor),
+              ),
+            ),
+          ),
+          // 간격 벌리기
+          const SizedBox(width: smallSpace,),
+          Expanded(
+            child: SizedBox(
+              height: submitButtonHeight,
+              child: ElevatedButton(
+                onPressed: (){},
+                child: Text("확인"),
+                style: ElevatedButton.styleFrom(textStyle: Theme.of(context).textTheme.subtitle1),
+              ),
+            ),
+          ),
+
+        ],
+      )
+    ]);
   }
 }
 
