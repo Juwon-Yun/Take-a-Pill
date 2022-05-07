@@ -10,6 +10,7 @@ class CustomThemes {
     splashColor: Colors.white,
     textTheme: _textTheme,
     brightness: Brightness.light,
+    appBarTheme: _appBarTheme,
   );
 
   static ThemeData get darkTheme => ThemeData(
@@ -18,6 +19,12 @@ class CustomThemes {
     splashColor: Colors.white,
     textTheme: _textTheme,
     brightness: Brightness.dark,
+  );
+
+  static const AppBarTheme _appBarTheme = AppBarTheme(
+    backgroundColor: Colors.white,
+    iconTheme: IconThemeData( color: CustomColors.primaryColor),
+    elevation:  0,
   );
 
 
