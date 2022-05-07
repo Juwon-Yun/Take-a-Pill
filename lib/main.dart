@@ -13,8 +13,14 @@ class MyApp extends StatelessWidget {
       title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
+        fontFamily: 'GmarketSansTTF',
       ),
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      // 기기에서 설정한 사이즈만큼 사용하는 것
+      builder: (context, child) => MediaQuery(
+          child: child!,
+          data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0)
+      ),
     );
   }
 }
