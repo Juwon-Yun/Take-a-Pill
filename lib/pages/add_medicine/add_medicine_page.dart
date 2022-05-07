@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/components/custom_constants.dart';
+import 'package:flutter_app/components/custom_page_route.dart';
 import 'package:flutter_app/pages/add_medicine/add_alarm_page.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -102,11 +103,21 @@ class _AddPageState extends State<AddPage> {
     );
   }
   void _onAddAlarmPage(){
-    Navigator.push(context, MaterialPageRoute(
-      builder: (context) => AddAlarmPage(
-        medicineImage: _medicineImage,
-        medicineName: _nameController.text),
-      )
+    Navigator.push(
+        context,
+        // fade animation 적용하기
+        FadePageRoute(
+            page: AddAlarmPage(
+              medicineImage: _medicineImage,
+              medicineName: _nameController.text,
+            )
+        )
+
+      // MaterialPageRoute(
+      // builder: (context) => AddAlarmPage(
+      //   medicineImage: _medicineImage,
+      //   medicineName: _nameController.text),
+      // )
     );
   }
 }
