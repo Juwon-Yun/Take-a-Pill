@@ -13,7 +13,7 @@ class AddPageBody extends StatelessWidget {
         onTap: (){
           FocusScope.of(context).unfocus();
         },
-        child: SingleChildScrollView(
+        // child: SingleChildScrollView(
             child: Padding(
                 padding: pagePadding,
                 child: Column(
@@ -21,7 +21,7 @@ class AddPageBody extends StatelessWidget {
                   children: children,
                 )
             )
-        )
+        // )
     );
   }
 }
