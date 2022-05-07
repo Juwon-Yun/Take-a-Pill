@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/components/custom_constants.dart';
+import 'package:image_picker/image_picker.dart';
 
 class AddPage extends StatefulWidget {
   const AddPage({Key? key}) : super(key: key);
@@ -12,6 +15,8 @@ class AddPage extends StatefulWidget {
 class _AddPageState extends State<AddPage> {
 
   final _nameController = TextEditingController();
+
+  File? _pickedImage;
 
   // 화면이 끝날때 꺼준다.
   @override
@@ -45,11 +50,23 @@ class _AddPageState extends State<AddPage> {
                 child: CircleAvatar(
                   radius: 40,
                   child: CupertinoButton(
-                    onPressed: (){},
-                    child: const Icon(
+                    onPressed: (){
+                      ImagePicker().pickImage(source: ImageSource.camera)
+                      .then((value) {
+                        setState(() {
+                          if (value == null) return;
+                          _pickedImage = File(value.path);
+                        });
+                      });
+                    },
+                    child: _pickedImage == null ? const Icon(
                       CupertinoIcons.photo_camera,
                       size: 30,
-                      color: Colors.white,),
+                      color: Colors.white,)
+                      : CircleAvatar(
+                        foregroundImage: FileImage(_pickedImage!),
+                        radius: 40,
+                    ),
                   ),
                 ),
               ),
