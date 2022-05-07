@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/components/custom_themes.dart';
 
 void main() {
   runApp(const MyApp());
@@ -11,10 +12,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        fontFamily: 'GmarketSansTTF',
-      ),
+      theme: CustomThemes.lightTheme,
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
       // 기기에서 설정한 사이즈만큼 사용하는 것
       builder: (context, child) => MediaQuery(
