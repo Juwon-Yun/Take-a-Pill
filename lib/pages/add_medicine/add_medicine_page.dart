@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/components/custom_constants.dart';
+import 'package:flutter_app/pages/add_medicine/add_alarm_page.dart';
 import 'package:image_picker/image_picker.dart';
 
 class AddPage extends StatefulWidget {
@@ -15,7 +16,7 @@ class AddPage extends StatefulWidget {
 class _AddPageState extends State<AddPage> {
 
   final _nameController = TextEditingController();
-
+  File? _medicineImage;
 
   // 화면이 끝날때 꺼준다.
   @override
@@ -48,8 +49,12 @@ class _AddPageState extends State<AddPage> {
                   style: Theme.of(context).textTheme.headline4,
                 ),
                 const SizedBox(height: largeSpace,),
-                const Center(
-                  child: MedicineImageButton(),
+                 Center(
+                  child: MedicineImageButton(
+                    changeImageFile: (File? value){
+                      _medicineImage = value;
+                    },
+                  ),
                     ),
                 const SizedBox(
                   height: largeSpace + regularSpace,
@@ -87,19 +92,30 @@ class _AddPageState extends State<AddPage> {
           child: SizedBox(
             height: submitButtonHeight,
             child: ElevatedButton(
-              child: Text('다음'),
+              child: const Text('다음'),
               style: ElevatedButton.styleFrom(textStyle: Theme.of(context).textTheme.subtitle1),
-              onPressed: _nameController.text.isEmpty ? null : (){},
+              onPressed: _nameController.text.isEmpty ? null : _onAddAlarmPage,
             ),
           ),
         ),
       ),
     );
   }
+  void _onAddAlarmPage(){
+    Navigator.push(context, MaterialPageRoute(
+      builder: (context) => AddAlarmPage(
+        medicineImage: _medicineImage,
+        medicineName: _nameController.text),
+      )
+    );
+  }
 }
 
 class MedicineImageButton extends StatefulWidget {
-  const MedicineImageButton({Key? key}) : super(key: key);
+  const MedicineImageButton({Key? key, required this.changeImageFile}) : super(key: key);
+
+  // valueChange로 emitt 기능 구현하기
+  final ValueChanged<File?> changeImageFile;
 
   @override
   State<MedicineImageButton> createState() => _MedicineImageButtonState();
@@ -143,6 +159,7 @@ class _MedicineImageButtonState extends State<MedicineImageButton> {
       if(value != null){
         setState(() {
           _pickedImage = File(value.path);
+          widget.changeImageFile(_pickedImage);
         });
       }
       Navigator.maybePop(context);
