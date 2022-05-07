@@ -5,15 +5,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/components/custom_colors.dart';
 import 'package:flutter_app/components/custom_constants.dart';
 import 'package:flutter_app/components/custom_widget.dart';
+import 'package:intl/intl.dart';
 
 import 'components/add_page_widget.dart';
 
-class AddAlarmPage extends StatelessWidget {
-  AddAlarmPage({Key? key, required this.medicineImage, required this.medicineName}) : super(key: key);
+class AddAlarmPage extends StatefulWidget {
+  const AddAlarmPage({Key? key, required this.medicineImage, required this.medicineName}) : super(key: key);
 
   final File? medicineImage;
   final String medicineName;
-  final alarms = <String>[
+
+  @override
+  State<AddAlarmPage> createState() => _AddAlarmPageState();
+}
+
+class _AddAlarmPageState extends State<AddAlarmPage> {
+  final _alarms = <String>[
     '08:00',
     '13:00',
     '19:00',
@@ -45,40 +52,55 @@ class AddAlarmPage extends StatelessWidget {
       bottomNavigationBar: BottomSubmitButton(onPressed: (){}, text: '완료'),
     );
   }
+
   List<Widget> get alarmWidgets {
     final children = <Widget>[];
 
     children.addAll(
-        alarms.map((alaramTime) => AlarmBox( time:  alaramTime,)),
+      _alarms.map((alarmTime) => AlarmBox(
+          time:  alarmTime,
+          onPressedMinus: (){
+            setState(() {
+              _alarms.remove(alarmTime);
+            });
+          },)),
     );
-    children.add(AddAlarmButton());
+    children.add(AddAlarmButton(onPressedAddAlarm: (){
+      final now = DateTime.now();
+      final nowTime = DateFormat('HH:mm').format(now);
+      setState(() {
+        _alarms.add(nowTime);
+      });
+    },));
     return children;
   }
 }
 
 class AlarmBox extends StatelessWidget {
   const AlarmBox({
-    Key? key, required this.time
+    Key? key, required this.time, required this.onPressedMinus
   }) : super(key: key);
 
   final String time;
+  final VoidCallback onPressedMinus;
 
   @override
   Widget build(BuildContext context) {
+    final initTime = DateFormat('HH:mm').parse(time);
+
     return TextButton(
       style: TextButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 6), textStyle: Theme.of(context).textTheme.subtitle2),
       onPressed: (){},
       child: Row(
         children: [
-          Expanded(flex: 1, child: IconButton(onPressed: (){}, icon: const Icon(CupertinoIcons.minus_circled))),
+          Expanded(flex: 1, child: IconButton(onPressed: onPressedMinus, icon: const Icon(CupertinoIcons.minus_circled))),
           Expanded(
               flex: 5,
               child: TextButton(
                 onPressed: (){
                 showModalBottomSheet(context: context, builder: (context){
-                  return const TimePickerBottomSheet();
+                  return TimePickerBottomSheet(initialDateTime: initTime);
                 });
-            // }, child: const Text('18:00'))),
               },
               child: Text(time)
             )
@@ -89,14 +111,16 @@ class AlarmBox extends StatelessWidget {
   }
 }
 class TimePickerBottomSheet extends StatelessWidget {
-  const TimePickerBottomSheet({Key? key}) : super(key: key);
+  const TimePickerBottomSheet({Key? key, required this.initialDateTime}) : super(key: key);
+
+  final DateTime initialDateTime;
 
   @override
   Widget build(BuildContext context) {
     return BottomSheetBody(children: [
       SizedBox(
           height: 200,
-          child: CupertinoDatePicker(onDateTimeChanged: (dateTime){}, mode: CupertinoDatePickerMode.time,)
+          child: CupertinoDatePicker(onDateTimeChanged: (dateTime){}, mode: CupertinoDatePickerMode.time, initialDateTime: initialDateTime,)
       ),
       const SizedBox(width: regularSpace,),
       Row(
@@ -106,7 +130,7 @@ class TimePickerBottomSheet extends StatelessWidget {
               height: submitButtonHeight,
               child: ElevatedButton(
                 onPressed: (){},
-                child: Text("취소"),
+                child: const Text('취소'),
                 style: ElevatedButton.styleFrom(textStyle: Theme.of(context).textTheme.subtitle1, primary: Colors.white, onPrimary: CustomColors.primaryColor),
               ),
             ),
@@ -118,7 +142,7 @@ class TimePickerBottomSheet extends StatelessWidget {
               height: submitButtonHeight,
               child: ElevatedButton(
                 onPressed: (){},
-                child: Text("확인"),
+                child: const Text('확인'),
                 style: ElevatedButton.styleFrom(textStyle: Theme.of(context).textTheme.subtitle1),
               ),
             ),
@@ -132,14 +156,16 @@ class TimePickerBottomSheet extends StatelessWidget {
 
 class AddAlarmButton extends StatelessWidget {
   const AddAlarmButton({
-    Key? key,
+    Key? key, required this.onPressedAddAlarm
   }) : super(key: key);
+
+  final VoidCallback onPressedAddAlarm;
 
   @override
   Widget build(BuildContext context) {
     return TextButton(
       style: TextButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 6), textStyle: Theme.of(context).textTheme.subtitle1),
-      onPressed: (){},
+      onPressed: onPressedAddAlarm,
       child: Row(
         children: const [
           Expanded(flex: 1, child: Icon(CupertinoIcons.plus_circled)),
