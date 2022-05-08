@@ -6,6 +6,7 @@ import 'package:flutter_app/components/custom_colors.dart';
 import 'package:flutter_app/components/custom_constants.dart';
 import 'package:flutter_app/components/custom_widget.dart';
 import 'package:flutter_app/main.dart';
+import 'package:flutter_app/models/medicine.dart';
 import 'package:flutter_app/services/add_medicine_service.dart';
 import 'package:flutter_app/services/custom_file_service.dart';
 import 'package:intl/intl.dart';
@@ -59,6 +60,7 @@ class AddAlarmPage extends StatelessWidget {
 
             for( var alarm in service.alarms){
               result = await notification.addNotification(
+                  medicineId: 0,
                   alarmTimeStr: alarm,
                   title: '$alarm 약 먹을 시간이에요!',
                   body: '$medicineName 복약했다고 알려주세요!'
@@ -76,7 +78,9 @@ class AddAlarmPage extends StatelessWidget {
             }
 
             // 3. add medicine mode (local DB, hive)
+            final medicine = Medicine(id: 0, name: medicineName, imagePath: imageFilePath, alarms: service.alarms);
 
+            // hive 추가하기
 
       }, text: '완료'),
     );

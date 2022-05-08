@@ -37,6 +37,9 @@ class CustomNotificationService{
   Future<bool> addNotification({
     // required DateTime alarmTime,
     required String alarmTimeStr,
+
+    required int medicineId,
+
     required String title,
     required String body,
   }) async {
@@ -57,8 +60,8 @@ class CustomNotificationService{
         ? now.day + 1 : now.day;
 
     // id casting
-    final alarmTimeId = alarmTimeStr.replaceAll(':', '');
-
+    String alarmTimeId = alarmTimeStr.replaceAll(':', '');
+    alarmTimeId = medicineId.toString() + alarmTimeId; // 1 + 08:00 => 10800
 
     // add schedule notification, id value is must be unique
     final details = _notificationDetails(alarmTimeId, title : title, body: body);
