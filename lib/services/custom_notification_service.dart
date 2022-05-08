@@ -35,7 +35,8 @@ class CustomNotificationService{
   }
 
   Future<bool> addNotification({
-    required DateTime alarmTime,
+    // required DateTime alarmTime,
+    required String alarmTimeStr,
     required String title,
     required String body,
   }) async {
@@ -47,13 +48,16 @@ class CustomNotificationService{
 
     // exception
     final now = tz.TZDateTime.now(tz.local);
+
+    final alarmTime = DateFormat('HH:mm').parse(alarmTimeStr);
+
     // 이전 날짜는 예약되지않게
     final day = (alarmTime.hour < now.hour ||
         alarmTime.hour == now.hour && alarmTime.minute <= now.minute)
         ? now.day + 1 : now.day;
 
     // id casting
-    final alarmTimeId = DateFormat('HH:mm').format(now).replaceAll(':', '');
+    final alarmTimeId = alarmTimeStr.replaceAll(':', '');
 
 
     // add schedule notification, id value is must be unique

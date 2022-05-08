@@ -3,10 +3,11 @@ import 'package:flutter_app/components/custom_themes.dart';
 import 'package:flutter_app/pages/home_page.dart';
 import 'package:flutter_app/services/custom_notification_service.dart';
 
+final notification = CustomNotificationService();
+
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
-  final notification = CustomNotificationService();
   notification.initializeTimeZone();
   notification.initializeNotification();
 
