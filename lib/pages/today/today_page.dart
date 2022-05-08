@@ -9,6 +9,7 @@ import 'package:flutter_app/models/medicine_alarm.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 import '../../models/medicine.dart';
+import 'today_empty_widget.dart';
 
 class TodayPage extends StatelessWidget {
   const TodayPage({Key? key}) : super(key: key);
@@ -35,25 +36,37 @@ class TodayPage extends StatelessWidget {
     final medicines = box.values.toList();
     final medicineAlarms = <MedicineAlarm>[];
 
+    if(medicines.isEmpty){
+      return const TodayEmpty();
+    }
+
     for(var medicine in medicines){
       for(var alarm in medicine.alarms){
         medicineAlarms.add(MedicineAlarm(medicine.id, medicine.name, medicine.imagePath, alarm, medicine.key));
       }
     }
 
-    return ListView.separated(
-      padding: const EdgeInsets.symmetric(vertical: smallSpace),
-      // scroll overflow 방지
-      itemCount: medicineAlarms.length,
-      itemBuilder: (context, idx){
-        return MedicineListTile(medicineAlarm: medicineAlarms[idx]);
-      },
-      // 구분할 위젯을 반복할수 있다.
-      separatorBuilder: (BuildContext context, int index) {
-        // return const SizedBox(height: regularSpace);
-        // 높이를 알아서 먹는다. 근데 20만큼 더 높여줌
-        return const Divider(height: regularSpace);
-      },
+    return Column(
+      children : [
+        const Divider(height: 1, thickness: 1.0),
+        Expanded(
+          child: ListView.separated(
+          padding: const EdgeInsets.symmetric(vertical: smallSpace),
+          // scroll overflow 방지
+          itemCount: medicineAlarms.length,
+          itemBuilder: (context, idx){
+            return MedicineListTile(medicineAlarm: medicineAlarms[idx]);
+          },
+          // 구분할 위젯을 반복할수 있다.
+          separatorBuilder: (BuildContext context, int index) {
+            // return const SizedBox(height: regularSpace);
+            // 높이를 알아서 먹는다. 근데 20만큼 더 높여줌
+            return const Divider(height: regularSpace);
+          },
+      ),
+        ),
+      const Divider(height: 1, thickness: 1.0),
+      ],
     );
   }
 
