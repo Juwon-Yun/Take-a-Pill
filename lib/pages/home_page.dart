@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/components/custom_colors.dart';
+import 'package:flutter_app/components/custom_constants.dart';
 import 'package:flutter_app/pages/add_medicine/add_medicine_page.dart';
 import 'package:flutter_app/pages/history/history_page.dart';
 import 'package:flutter_app/pages/today/today_page.dart';
@@ -23,19 +24,16 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Container(
       color: Colors.white,
-      child: SafeArea(
-        // 탑의 safeArea 설정은 false
-        top: false,
-        child: Scaffold(
-          appBar: AppBar(),
-          body: _pages[_currentIdx],
-          floatingActionButton: FloatingActionButton(
-            onPressed: _onAddMedicine,
-            child: const Icon(CupertinoIcons.add),
-          ),
-          floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-          bottomNavigationBar: _buildBottomAppBar(),
+      child: Scaffold(
+        // title이 필요없어서 appBar를 지운다.
+        // appBar: AppBar(),
+        body: Padding(padding: pagePadding, child : SafeArea(child: _pages[_currentIdx])),
+        floatingActionButton: FloatingActionButton(
+          onPressed: _onAddMedicine,
+          child: const Icon(CupertinoIcons.add),
         ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        bottomNavigationBar: _buildBottomAppBar(),
       ),
     );
   }
@@ -43,7 +41,7 @@ class _HomePageState extends State<HomePage> {
   BottomAppBar _buildBottomAppBar(){
     return BottomAppBar(
       // 그림자 없애기
-      elevation: 0,
+      // elevation: 0,
       child: Container(
         // meterial에서 권장하는 높이로 설정
         height: kBottomNavigationBarHeight,
