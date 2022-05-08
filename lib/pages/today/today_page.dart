@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/components/custom_constants.dart';
+import 'package:flutter_app/components/custom_page_route.dart';
 import 'package:flutter_app/main.dart';
 import 'package:flutter_app/models/medicine_alarm.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -70,7 +71,14 @@ class MedicineListTile extends StatelessWidget {
     return Row(children: [
       CupertinoButton(
           padding: EdgeInsets.zero ,
-          onPressed: (){},
+          onPressed: (){
+            medicineAlarm.imagePath == null
+            ? null
+            : Navigator.push(context, FadePageRoute(
+                page: ImageDetailWidget(medicineAlarm: medicineAlarm)
+              )
+            );
+          },
           child: CircleAvatar(
             radius: 40,
             foregroundImage: medicineAlarm.imagePath == null ? null : FileImage(File(medicineAlarm.imagePath!)),
@@ -104,6 +112,29 @@ class MedicineListTile extends StatelessWidget {
           } ,
           child: const Icon(CupertinoIcons.ellipsis_vertical)),
     ],
+    );
+  }
+}
+
+class ImageDetailWidget extends StatelessWidget {
+  const ImageDetailWidget({
+    Key? key,
+    required this.medicineAlarm,
+  }) : super(key: key);
+
+  final MedicineAlarm medicineAlarm;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        leading: const CloseButton(),
+      ),
+      body: Center(
+        child: Image.file(
+            File(medicineAlarm.imagePath!)
+        )
+        )
     );
   }
 }
