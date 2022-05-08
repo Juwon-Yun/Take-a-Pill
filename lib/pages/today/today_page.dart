@@ -33,16 +33,17 @@ class TodayPage extends StatelessWidget {
   Widget _builderMedicineListView(context, Box<Medicine> box, _) {
     final medicines = box.values.toList();
     final medicineAlarms = <MedicineAlarm>[];
+
     for(var medicine in medicines){
       for(var alarm in medicine.alarms){
-        medicineAlarms.add(MedicineAlarm(medicine.id, medicine.name, medicine.imagePath, alarm));
+        medicineAlarms.add(MedicineAlarm(medicine.id, medicine.name, medicine.imagePath, alarm, medicine.key));
       }
     }
 
     return ListView.separated(
       padding: const EdgeInsets.symmetric(vertical: smallSpace),
       // scroll overflow 방지
-      itemCount: medicines.length,
+      itemCount: medicineAlarms.length,
       itemBuilder: (context, idx){
         return MedicineListTile(medicineAlarm: medicineAlarms[idx]);
       },
@@ -97,7 +98,11 @@ class MedicineListTile extends StatelessWidget {
             )
           ],
         )),
-      CupertinoButton(onPressed: (){} ,child: const Icon(CupertinoIcons.ellipsis_vertical)),
+      CupertinoButton(
+          onPressed: (){
+            medicineRepository.deleteMedicine(medicineAlarm.key);
+          } ,
+          child: const Icon(CupertinoIcons.ellipsis_vertical)),
     ],
     );
   }
