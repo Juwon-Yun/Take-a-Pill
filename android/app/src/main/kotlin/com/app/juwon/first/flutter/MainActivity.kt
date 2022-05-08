@@ -1,4 +1,4 @@
-package com.app.flutter_app
+package com.app.juwon.first.flutter;
 
 import io.flutter.embedding.android.FlutterActivity
 
