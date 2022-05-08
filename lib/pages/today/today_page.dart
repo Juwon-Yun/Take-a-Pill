@@ -31,12 +31,20 @@ class TodayPage extends StatelessWidget {
           //     // ListTile은 커스텀이 복잡해 직접 그린다.
           //     // ListTile(),
           // ],
-          child: ListView.builder(
+          child: ListView.separated(
+            padding: const EdgeInsets.symmetric(vertical: smallSpace),
             // scroll overflow 방지
             itemCount: list.length,
             itemBuilder: (context, idx){
               return MedicineListTile(name: list[idx]);
-            }),
+            },
+            // 구분할 위젯을 반복할수 있다.
+            separatorBuilder: (BuildContext context, int index) {
+              // return const SizedBox(height: regularSpace);
+              // 높이를 알아서 먹는다. 근데 20만큼 더 높여줌
+              return const Divider(height: regularSpace);
+            },
+          ),
         ),
       ],
     );
@@ -53,35 +61,32 @@ class MedicineListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final textStyle = Theme.of(context).textTheme.bodyText2;
 
-    return Container(
-      color: Colors.yellow,
-      child: Row(children: [
-        CupertinoButton(padding: EdgeInsets.zero ,onPressed: (){},child: CircleAvatar(radius: 40,)),
-        const SizedBox(width: smallSpace),
-        // 스크롤 디테일
-        const Divider(height: 1, thickness: 2.0),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('🕑08:30', style: textStyle),
-              const SizedBox(height: 6),
-              Wrap(
-                // wrap 전용 배치
-                crossAxisAlignment: WrapCrossAlignment.center,
-                children: [
-                  Text('$name,', style: textStyle,),
-                  TileActionButton(title: '지금', onTap: () {  },),
-                  Text('|',style: textStyle,),
-                  TileActionButton(title: '아까', onTap: () {  },),
-                  Text('먹었어요!', style: textStyle,),
-                ]
-              )
-            ],
-          )),
-        CupertinoButton(onPressed: (){} ,child: const Icon(CupertinoIcons.ellipsis_vertical)),
-      ],
-      ),
+    return Row(children: [
+      CupertinoButton(padding: EdgeInsets.zero ,onPressed: (){},child: CircleAvatar(radius: 40,)),
+      const SizedBox(width: smallSpace),
+      // 스크롤 디테일
+      const Divider(height: 1, thickness: 2.0),
+      Expanded(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('🕑08:30', style: textStyle),
+            const SizedBox(height: 6),
+            Wrap(
+              // wrap 전용 배치
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: [
+                Text('$name,', style: textStyle,),
+                TileActionButton(title: '지금', onTap: () {  },),
+                Text('|',style: textStyle,),
+                TileActionButton(title: '아까', onTap: () {  },),
+                Text('먹었어요!', style: textStyle,),
+              ]
+            )
+          ],
+        )),
+      CupertinoButton(onPressed: (){} ,child: const Icon(CupertinoIcons.ellipsis_vertical)),
+    ],
     );
   }
 }
