@@ -1,16 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/components/custom_constants.dart';
+import 'package:flutter_app/main.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+
+import '../../models/medicine.dart';
 
 class TodayPage extends StatelessWidget {
-  TodayPage({Key? key}) : super(key: key);
-
-  final list = [
-    '약 이름',
-    '약 이름 테스트',
-    '약 이름 테스트 약 이름 테스트',
-    '약 이름 테스트 약 이름 테스트 약 이름 테스트',
-  ];
+  const TodayPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -21,35 +18,34 @@ class TodayPage extends StatelessWidget {
         Text('오늘 복용할 약은?', style: Theme.of(context).textTheme.headline4,),
         const SizedBox(height:  regularSpace),
         Expanded(
-          // child: ListView(
-          //   children: const [
-          //     MedicineListTile(name: '약'),
-          //     MedicineListTile(name: '약 이름'),
-          //     MedicineListTile(name: '약 이름 테스트'),
-          //     MedicineListTile(name: '약 이름 테스트 약 이름 테스트'),
-          //     MedicineListTile(name: '약 이름 테스트 약 이름 테스트 약 이름 테스트'),
-          //     // ListTile은 커스텀이 복잡해 직접 그린다.
-          //     // ListTile(),
-          // ],
-          child: ListView.separated(
-            padding: const EdgeInsets.symmetric(vertical: smallSpace),
-            // scroll overflow 방지
-            itemCount: list.length,
-            itemBuilder: (context, idx){
-              return MedicineListTile(name: list[idx]);
-            },
-            // 구분할 위젯을 반복할수 있다.
-            separatorBuilder: (BuildContext context, int index) {
-              // return const SizedBox(height: regularSpace);
-              // 높이를 알아서 먹는다. 근데 20만큼 더 높여줌
-              return const Divider(height: regularSpace);
-            },
+          child: ValueListenableBuilder(
+            valueListenable: medicineRepository.medicineBox.listenable(),
+            builder: _builderMedicineListView,
           ),
         ),
       ],
     );
   }
-  
+
+  Widget _builderMedicineListView(context, Box<Medicine> box, _) {
+    final list = box.values.toList();
+    print(list);
+    return ListView.separated(
+      padding: const EdgeInsets.symmetric(vertical: smallSpace),
+      // scroll overflow 방지
+      itemCount: list.length,
+      itemBuilder: (context, idx){
+        return MedicineListTile(name: list[idx].name);
+      },
+      // 구분할 위젯을 반복할수 있다.
+      separatorBuilder: (BuildContext context, int index) {
+        // return const SizedBox(height: regularSpace);
+        // 높이를 알아서 먹는다. 근데 20만큼 더 높여줌
+        return const Divider(height: regularSpace);
+      },
+    );
+  }
+
 }
 
 class MedicineListTile extends StatelessWidget {
