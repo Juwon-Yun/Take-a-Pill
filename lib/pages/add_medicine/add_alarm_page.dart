@@ -7,6 +7,7 @@ import 'package:flutter_app/components/custom_constants.dart';
 import 'package:flutter_app/components/custom_widget.dart';
 import 'package:flutter_app/main.dart';
 import 'package:flutter_app/services/add_medicine_service.dart';
+import 'package:flutter_app/services/custom_file_service.dart';
 import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -68,8 +69,14 @@ class AddAlarmPage extends StatelessWidget {
               showPermissionDenied(context, permission: '알람');
             }
 
-        // 2. save image (local dir)
-        // 3. add medicine mode (local DB, hive)
+            // 2. save image (local dir)
+            String? imageFilePath;
+            if(medicineImage != null){
+              imageFilePath = await saveImageToLocalDirectory(medicineImage!);
+            }
+
+            // 3. add medicine mode (local DB, hive)
+
 
       }, text: '완료'),
     );
