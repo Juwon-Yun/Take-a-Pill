@@ -20,8 +20,8 @@ class MedicineAdapter extends TypeAdapter<Medicine> {
       id: fields[0] as int,
       name: fields[1] as String,
       imagePath: fields[2] as String?,
-      // alarms: (fields[3] as List).cast<String>(),
-      alarms: (fields[3] as Set).cast<String>(),
+      alarms: (fields[3] as List).cast<String>(),
+      // alarms: (fields[3] as Set).cast<String>(),
     );
   }
 

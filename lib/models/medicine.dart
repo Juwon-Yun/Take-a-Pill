@@ -22,5 +22,12 @@ class Medicine{
 
   // alarms
   @HiveField(3)
-  final Set<String> alarms;
+  final List<String> alarms;
+
+  @override
+  String toString() {
+    // 이전에 저장한 값의 타입이 Set 이어서 에러남
+    return '{id : $id, name : $name, imagePath : $imagePath}';
+    // return '{id : $id, name : $name, imagePath : $imagePath, alarms : $alarms}';
+  }
 }

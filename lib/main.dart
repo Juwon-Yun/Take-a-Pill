@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/components/custom_themes.dart';
 import 'package:flutter_app/pages/home_page.dart';
 import 'package:flutter_app/repositories/medicine_hive.dart';
+import 'package:flutter_app/repositories/medicine_repository.dart';
 import 'package:flutter_app/services/custom_notification_service.dart';
 
 final notification = CustomNotificationService();
 final hive = MedicineHive();
+final medicineRepository = MedicineRepository();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
