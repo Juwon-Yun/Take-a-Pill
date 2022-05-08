@@ -6,6 +6,7 @@ import 'package:flutter_app/components/custom_constants.dart';
 import 'package:flutter_app/components/custom_page_route.dart';
 import 'package:flutter_app/main.dart';
 import 'package:flutter_app/models/medicine_alarm.dart';
+import 'package:flutter_app/pages/bottomsheet/time_setting_bottomsheet.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 import '../../models/medicine.dart';
@@ -111,9 +112,17 @@ class MedicineListTile extends StatelessWidget {
               crossAxisAlignment: WrapCrossAlignment.center,
               children: [
                 Text('${medicineAlarm.name},', style: textStyle,),
-                TileActionButton(title: '지금', onTap: () {  },),
+                TileActionButton(title: '지금', onTap: () {
+
+                },),
                 Text('|',style: textStyle,),
-                TileActionButton(title: '아까', onTap: () {  },),
+                TileActionButton(title: '아까', onTap: () {
+                  showModalBottomSheet(
+                      context: context,
+                      builder: (context) => TimeSettingBottomSheet(
+                          initialDateTime: medicineAlarm.alarmTime
+                      )).then((value) => print("value $value"));
+                },),
                 Text('먹었어요!', style: textStyle,),
               ]
             )

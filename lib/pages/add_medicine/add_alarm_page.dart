@@ -12,6 +12,7 @@ import 'package:flutter_app/services/custom_file_service.dart';
 import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 
+import '../bottomsheet/time_setting_bottomsheet.dart';
 import 'components/add_page_widget.dart';
 
 class AddAlarmPage extends StatelessWidget {
@@ -142,7 +143,17 @@ class AlarmBox extends StatelessWidget {
               child: TextButton(
                 onPressed: (){
                 showModalBottomSheet(context: context, builder: (context){
-                  return TimePickerBottomSheet(initialDateTime: time, service: service,);
+                  return TimeSettingBottomSheet(initialDateTime: time);
+                })
+                // pop의 두번재 매개변수로 값을 받아온다. 리턴타입이 Future여서 그럼
+                .then((value){
+                  if(value == null || value is! DateTime){
+                    return;
+                  }
+                  service.setAlarm(
+                    prevTime: time,
+                    setTime: value,
+                  );
                 });
               },
               child: Text(time)
@@ -153,62 +164,7 @@ class AlarmBox extends StatelessWidget {
     );
   }
 }
-class TimePickerBottomSheet extends StatelessWidget {
-  TimePickerBottomSheet({Key? key, required this.initialDateTime, required this.service}) : super(key: key);
 
-  final String initialDateTime;
-  final AddMedicineService service;
-
-  DateTime? _setDateTime;
-
-  @override
-  Widget build(BuildContext context) {
-    final initDateTime = DateFormat('HH:mm').parse(initialDateTime);
-
-    return BottomSheetBody(children: [
-      SizedBox(
-          height: 200,
-          child: CupertinoDatePicker(
-            onDateTimeChanged: (dateTime){
-              _setDateTime = dateTime;
-            },
-            mode: CupertinoDatePickerMode.time,
-            initialDateTime: initDateTime,)
-      ),
-      const SizedBox(width: regularSpace,),
-      Row(
-        children: [
-          Expanded(
-            child: SizedBox(
-              height: submitButtonHeight,
-              child: ElevatedButton(
-                onPressed: ()=> Navigator.pop(context),
-                child: const Text('취소'),
-                style: ElevatedButton.styleFrom(textStyle: Theme.of(context).textTheme.subtitle1, primary: Colors.white, onPrimary: CustomColors.primaryColor),
-              ),
-            ),
-          ),
-          // 간격 벌리기
-          const SizedBox(width: smallSpace,),
-          Expanded(
-            child: SizedBox(
-              height: submitButtonHeight,
-              child: ElevatedButton(
-                onPressed: (){
-                  service.setAlarm(prevTime: initialDateTime, setTime: _setDateTime ?? initDateTime);
-                  Navigator.pop(context);
-                },
-                child: const Text('선택'),
-                style: ElevatedButton.styleFrom(textStyle: Theme.of(context).textTheme.subtitle1),
-              ),
-            ),
-          ),
-
-        ],
-      )
-    ]);
-  }
-}
 
 class AddAlarmButton extends StatelessWidget {
   const AddAlarmButton({
