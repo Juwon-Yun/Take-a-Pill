@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -9,16 +10,16 @@ import 'package:timezone/timezone.dart' as tz;
 
 final notification = FlutterLocalNotificationsPlugin();
 
-class CustomNotificationService{
-
+class CustomNotificationService {
   Future<void> initializeTimeZone() async {
     tz.initializeTimeZones();
     final timeZoneName = await FlutterNativeTimezone.getLocalTimezone();
     tz.setLocalLocation(tz.getLocation(timeZoneName));
   }
 
-  Future<void> initializeNotification() async{
-    const initializationSettingsAndroid = AndroidInitializationSettings('@mipmap/ic_launcher');
+  Future<void> initializeNotification() async {
+    const initializationSettingsAndroid =
+    AndroidInitializationSettings('@mipmap/ic_launcher');
 
     const initializationSettingsIOS = IOSInitializationSettings(
       requestAlertPermission: false,
@@ -28,79 +29,118 @@ class CustomNotificationService{
 
     const initializationSettings = InitializationSettings(
       android: initializationSettingsAndroid,
-      iOS: initializationSettingsIOS
+      iOS: initializationSettingsIOS,
     );
 
-    await notification.initialize(initializationSettings);
+    await notification.initialize(
+      initializationSettings,
+    );
+  }
+
+  String alarmId(int medicineId, String alarmTime) {
+    return medicineId.toString() + alarmTime.replaceAll(':', '');
   }
 
   Future<bool> addNotification({
-    // required DateTime alarmTime,
-    required String alarmTimeStr,
-
     required int medicineId,
-
-    required String title,
-    required String body,
+    required String alarmTimeStr,
+    required String title, // HH:mm 약 먹을 시간이예요!
+    required String body, // {약이름} 복약했다고 알려주세요!
   }) async {
-    //if false?
-    if( !await permissionNotification){
+    if (!await permissionNotification) {
       // show native setting page
       return false;
     }
 
-    // exception
+    /// exception
     final now = tz.TZDateTime.now(tz.local);
-
     final alarmTime = DateFormat('HH:mm').parse(alarmTimeStr);
-
-    // 이전 날짜는 예약되지않게
     final day = (alarmTime.hour < now.hour ||
         alarmTime.hour == now.hour && alarmTime.minute <= now.minute)
-        ? now.day + 1 : now.day;
+        ? now.day + 1
+        : now.day;
 
-    // id casting
-    String alarmTimeId = alarmTimeStr.replaceAll(':', '');
-    alarmTimeId = medicineId.toString() + alarmTimeId; // 1 + 08:00 => 10800
+    /// id
+    String alarmTimeId = alarmId(medicineId, alarmTimeStr);
 
-    // add schedule notification, id value is must be unique
-    final details = _notificationDetails(alarmTimeId, title : title, body: body);
+    /// add schedule notification
+    final details = _notificationDetails(
+      alarmTimeId, // unique
+      title: title,
+      body: body,
+    );
 
-    await notification.zonedSchedule(int.parse(alarmTimeId), title, body, tz.TZDateTime(
-      tz.local,
-      now.year,
-      now.month,
-      day,
-      alarmTime.hour,
-      alarmTime.minute,
-    ), details,
-      uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
+    await notification.zonedSchedule(
+      int.parse(alarmTimeId), // unique
+      title,
+      body,
+      tz.TZDateTime(
+        tz.local,
+        now.year,
+        now.month,
+        day,
+        alarmTime.hour,
+        alarmTime.minute,
+      ),
+      details,
       androidAllowWhileIdle: true,
-      matchDateTimeComponents: DateTimeComponents.time);
+      uiLocalNotificationDateInterpretation:
+      UILocalNotificationDateInterpretation.absoluteTime,
+      matchDateTimeComponents: DateTimeComponents.time,
+      payload: alarmTimeId,
+    );
+    log('[notification list] ${await pendingNotificationIds}');
 
-      return true;
+    return true;
   }
 
-  NotificationDetails _notificationDetails(String id, { required String title, required String body}){
+  NotificationDetails _notificationDetails(
+      String id, {
+        required String title,
+        required String body,
+      }) {
     final android = AndroidNotificationDetails(
-        id, title, channelDescription: body, importance: Importance.max, priority: Priority.max);
-
+      id,
+      title,
+      channelDescription: body,
+      importance: Importance.max,
+      priority: Priority.max,
+    );
     const ios = IOSNotificationDetails();
 
-    return NotificationDetails(android: android, iOS: ios);
+    return NotificationDetails(
+      android: android,
+      iOS: ios,
+    );
   }
 
   Future<bool> get permissionNotification async {
-    if(Platform.isAndroid){
+    if (Platform.isAndroid) {
       return true;
-    }
-    if(Platform.isIOS){
-      return await notification.resolvePlatformSpecificImplementation<
+    } else if (Platform.isIOS) {
+      return await notification
+          .resolvePlatformSpecificImplementation<
           IOSFlutterLocalNotificationsPlugin>()
-          ?.requestPermissions(alert: true, badge: true, sound: true) ?? false;
+          ?.requestPermissions(alert: true, badge: true, sound: true) ??
+          false;
+    } else {
+      return false;
     }
-    // android iOS 둘다 아닐경우 false
-    return false;
+  }
+
+  Future<void> deleteMultipleAlarm(Iterable<String> alarmIds) async {
+    log('[before delete notification list] ${await pendingNotificationIds}');
+    for (final alarmId in alarmIds) {
+      final id = int.parse(alarmId);
+      await notification.cancel(id);
+    }
+    log('[after delete notification list] ${await pendingNotificationIds}');
+  }
+
+  Future<List<int>> get pendingNotificationIds {
+    final list = notification
+        .pendingNotificationRequests()
+        .then((value) => value.map((e) => e.id).toList());
+    return list;
   }
 }
-

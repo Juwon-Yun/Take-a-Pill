@@ -10,16 +10,23 @@ class TimeSettingBottomSheet extends StatelessWidget {
   const TimeSettingBottomSheet({
     Key? key,
     required this.initialDateTime,
+    this.submitTitle = '선택',
+    this.bottomWidget,
   }) : super(key: key);
 
   final String initialDateTime;
+  final String submitTitle;
+  final Widget? bottomWidget;
 
 
   @override
   Widget build(BuildContext context) {
-    final initDateTime = DateFormat('HH:mm').parse(initialDateTime);
+    final initDateTimeData = DateFormat('HH:mm').parse(initialDateTime);
+    final now = DateTime.now();
+    final updateDate = DateTime(now.year, now.month, now.day, initDateTimeData.hour, initDateTimeData.minute);
+
     // state를 다룰 필요가 없으므로 지역변수화 함, 따라서 접근제한자 풀음
-    DateTime setDateTime = initDateTime;
+    DateTime setDateTime = updateDate;
 
     return BottomSheetBody(children: [
       SizedBox(
@@ -29,9 +36,11 @@ class TimeSettingBottomSheet extends StatelessWidget {
               setDateTime = dateTime;
             },
             mode: CupertinoDatePickerMode.time,
-            initialDateTime: initDateTime,)
+            initialDateTime: updateDate,)
       ),
-      const SizedBox(width: regularSpace),
+      const SizedBox(width: smallSpace),
+      if(bottomWidget != null) bottomWidget!,
+      if(bottomWidget != null)const SizedBox(width: smallSpace),
       Row(
         children: [
           Expanded(
@@ -56,7 +65,7 @@ class TimeSettingBottomSheet extends StatelessWidget {
                 onPressed: (){
                   Navigator.pop(context, setDateTime);
                 },
-                child: const Text('선택'),
+                child: Text(submitTitle),
                 style: ElevatedButton.styleFrom(textStyle: Theme.of(context).textTheme.subtitle1),
               ),
             ),

@@ -1,8 +1,23 @@
 import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 
+import '../main.dart';
+
 // 변화 되었을때 디자인, setState 대신 쓰고 본문에서는 stateless로 다시 설정
 class AddMedicineService with ChangeNotifier{
+
+  AddMedicineService(int updateMedicineId){
+    final isUpdate = updateMedicineId != -1;
+
+    if(isUpdate){
+      final updateAlarms = medicineRepository.medicineBox.values
+          .singleWhere((element) => element.id == updateMedicineId).alarms;
+
+      _alarms.clear();
+      _alarms.addAll(updateAlarms);
+    }
+  }
+
   final _alarms = <String>{
     '00:00',
     '13:00',

@@ -58,7 +58,7 @@ class _HomePageState extends State<HomePage> {
             ),
             CupertinoButton(
               child: Icon(
-                CupertinoIcons.check_mark_circled_solid,
+                CupertinoIcons.home,
                 color : _currentIdx == 1 ? CustomColors.primaryColor : Colors.grey[350],
               ),
               onPressed: ()=> _onCurrentPage(1),

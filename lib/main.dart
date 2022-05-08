@@ -5,6 +5,7 @@ import 'package:flutter_app/repositories/medicine_history_repository.dart';
 import 'package:flutter_app/repositories/medicine_hive.dart';
 import 'package:flutter_app/repositories/medicine_repository.dart';
 import 'package:flutter_app/services/custom_notification_service.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 final notification = CustomNotificationService();
 final hive = MedicineHive();
@@ -13,7 +14,9 @@ final historyRepository = MedicineHistoryRepository();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
+  
+  await initializeDateFormatting();
+  
   await notification.initializeTimeZone();
   await notification.initializeNotification();
 

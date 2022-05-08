@@ -4,14 +4,19 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_app/components/custom_constants.dart';
 import 'package:flutter_app/components/custom_page_route.dart';
+import 'package:flutter_app/main.dart';
+import 'package:flutter_app/models/medicine.dart';
 import 'package:flutter_app/pages/add_medicine/add_alarm_page.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../components/custom_widget.dart';
+import '../bottomsheet/pick_image_bottomsheet.dart';
 import 'components/add_page_widget.dart';
 
 class AddPage extends StatefulWidget {
-  const AddPage({Key? key}) : super(key: key);
+  const AddPage({Key? key, this.updateMedicineId = -1}) : super(key: key);
+
+  final int updateMedicineId;
 
   @override
   State<AddPage> createState() => _AddPageState();
@@ -19,8 +24,28 @@ class AddPage extends StatefulWidget {
 
 class _AddPageState extends State<AddPage> {
 
-  final _nameController = TextEditingController();
+  late TextEditingController _nameController;
   File? _medicineImage;
+  
+  get _isUpdate => widget.updateMedicineId != -1;
+  
+  Medicine get _updateMedicine => medicineRepository.medicineBox.values
+      .singleWhere((element) => element.id == widget.updateMedicineId);
+
+  @override
+  void initState(){
+    super.initState();
+
+    if(_isUpdate){
+      _nameController = TextEditingController(text: _updateMedicine.name);
+      if(_updateMedicine.imagePath != null){
+        _medicineImage = File(_updateMedicine.imagePath!);
+      }
+    }else{
+      _nameController = TextEditingController();
+    }
+
+  }
 
   // 화면이 끝날때 꺼준다.
   @override
@@ -44,7 +69,8 @@ class _AddPageState extends State<AddPage> {
                   ),
                   const SizedBox(height: largeSpace,),
                    Center(
-                    child: MedicineImageButton(
+                    child: _MedicineImageButton(
+                      updateImage: _medicineImage,
                       changeImageFile: (File? value){
                         _medicineImage = value;
                       },
@@ -89,6 +115,7 @@ class _AddPageState extends State<AddPage> {
             page: AddAlarmPage(
               medicineImage: _medicineImage,
               medicineName: _nameController.text,
+              updatedMedicineId: widget.updateMedicineId,
             )
         )
 
@@ -103,18 +130,28 @@ class _AddPageState extends State<AddPage> {
 
 
 
-class MedicineImageButton extends StatefulWidget {
-  const MedicineImageButton({Key? key, required this.changeImageFile}) : super(key: key);
+class _MedicineImageButton extends StatefulWidget {
+  const _MedicineImageButton({Key? key,
+    required this.changeImageFile,
+    this.updateImage}) : super(key: key);
 
   // valueChange로 emitt 기능 구현하기
   final ValueChanged<File?> changeImageFile;
+  final File? updateImage;
+
 
   @override
-  State<MedicineImageButton> createState() => _MedicineImageButtonState();
+  State<_MedicineImageButton> createState() => _MedicineImageButtonState();
 }
 
-class _MedicineImageButtonState extends State<MedicineImageButton> {
+class _MedicineImageButtonState extends State<_MedicineImageButton> {
   File? _pickedImage;
+
+  @override
+  void initState(){
+    super.initState();
+    _pickedImage = widget.updateImage;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -164,24 +201,4 @@ class _MedicineImageButtonState extends State<MedicineImageButton> {
   }
 }
 
-class PickImageBottomSheet extends StatelessWidget {
-  const PickImageBottomSheet({Key? key, required this.onPressedCamera, required this.onPressedGallery}) : super(key: key);
-
-  final VoidCallback onPressedCamera;
-  final VoidCallback onPressedGallery;
-
-  @override
-  Widget build(BuildContext context) {
-    return BottomSheetBody(
-            children: [
-              TextButton(
-                  onPressed: onPressedCamera,
-                  child: const Text('카메라로 촬영')),
-              TextButton(
-                  onPressed: onPressedGallery,
-                  child: const Text('앨범에서 가져오기')),
-            ],
-    );
-  }
-}
 
