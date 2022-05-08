@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/components/custom_themes.dart';
 import 'package:flutter_app/pages/home_page.dart';
+import 'package:flutter_app/services/custom_notification_service.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  final notification = CustomNotificationService();
+  notification.initializeTimeZone();
+  notification.initializeNotification();
+
   runApp(const MyApp());
 }
 

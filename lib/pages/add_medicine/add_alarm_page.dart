@@ -49,7 +49,13 @@ class AddAlarmPage extends StatelessWidget {
           ))
         ],
       ),
-      bottomNavigationBar: BottomSubmitButton(onPressed: (){}, text: '완료'),
+      bottomNavigationBar: BottomSubmitButton(
+          onPressed: (){
+        // 1. add alarm
+        // 2. save image (local dir)
+        // 3. add medicine mode (local DB, hive)
+
+      }, text: '완료'),
     );
   }
 
@@ -93,7 +99,6 @@ class AlarmBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final initTime = DateFormat('HH:mm').parse(time);
 
     return TextButton(
       style: TextButton.styleFrom(padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 6), textStyle: Theme.of(context).textTheme.subtitle2),
@@ -106,7 +111,7 @@ class AlarmBox extends StatelessWidget {
               child: TextButton(
                 onPressed: (){
                 showModalBottomSheet(context: context, builder: (context){
-                  return TimePickerBottomSheet(initialDateTime: initTime);
+                  return TimePickerBottomSheet(initialDateTime: time, service: service,);
                 });
               },
               child: Text(time)
@@ -118,16 +123,26 @@ class AlarmBox extends StatelessWidget {
   }
 }
 class TimePickerBottomSheet extends StatelessWidget {
-  const TimePickerBottomSheet({Key? key, required this.initialDateTime}) : super(key: key);
+  TimePickerBottomSheet({Key? key, required this.initialDateTime, required this.service}) : super(key: key);
 
-  final DateTime initialDateTime;
+  final String initialDateTime;
+  final AddMedicineService service;
+
+  DateTime? _setDateTime;
 
   @override
   Widget build(BuildContext context) {
+    final initDateTime = DateFormat('HH:mm').parse(initialDateTime);
+
     return BottomSheetBody(children: [
       SizedBox(
           height: 200,
-          child: CupertinoDatePicker(onDateTimeChanged: (dateTime){}, mode: CupertinoDatePickerMode.time, initialDateTime: initialDateTime,)
+          child: CupertinoDatePicker(
+            onDateTimeChanged: (dateTime){
+              _setDateTime = dateTime;
+            },
+            mode: CupertinoDatePickerMode.time,
+            initialDateTime: initDateTime,)
       ),
       const SizedBox(width: regularSpace,),
       Row(
@@ -148,8 +163,11 @@ class TimePickerBottomSheet extends StatelessWidget {
             child: SizedBox(
               height: submitButtonHeight,
               child: ElevatedButton(
-                onPressed: (){},
-                child: const Text('확인'),
+                onPressed: (){
+                  service.setAlarm(prevTime: initialDateTime, setTime: _setDateTime ?? initDateTime);
+                  Navigator.pop(context);
+                },
+                child: const Text('선택'),
                 style: ElevatedButton.styleFrom(textStyle: Theme.of(context).textTheme.subtitle1),
               ),
             ),
