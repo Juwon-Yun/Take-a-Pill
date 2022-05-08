@@ -10,6 +10,7 @@ import 'package:flutter_app/pages/bottomsheet/time_setting_bottomsheet.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 import '../../models/medicine.dart';
+import '../../models/medicine_history.dart';
 import 'today_empty_widget.dart';
 
 class TodayPage extends StatelessWidget {
@@ -105,7 +106,7 @@ class MedicineListTile extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('🕑${medicineAlarm.alarmTime}', style: textStyle),
+            Text('🕑 ${medicineAlarm.alarmTime}', style: textStyle),
             const SizedBox(height: 6),
             Wrap(
               // wrap 전용 배치
@@ -121,7 +122,15 @@ class MedicineListTile extends StatelessWidget {
                       context: context,
                       builder: (context) => TimeSettingBottomSheet(
                           initialDateTime: medicineAlarm.alarmTime
-                      )).then((value) => print("value $value"));
+                      )).then((takeDateTime) {
+                        if( takeDateTime == null || takeDateTime! is DateTime){
+                          historyRepository.addHistory(MedicineHistory(
+                            id: medicineAlarm.id,
+                            takeTime: takeDateTime,
+                            alarmTime: medicineAlarm.alarmTime
+                          ));
+                        }
+                    });
                 },),
                 Text('먹었어요!', style: textStyle,),
               ]
