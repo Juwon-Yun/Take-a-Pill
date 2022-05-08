@@ -82,6 +82,10 @@ class AddAlarmPage extends StatelessWidget {
 
             // hive 추가하기
             medicineRepository.addMedicine(medicine);
+
+            // 콜백이 위젯이 퍼스트 일때까지 pop한다.
+            Navigator.popUntil(context, (route) => route.isFirst);
+
       }, text: '완료'),
     );
   }
