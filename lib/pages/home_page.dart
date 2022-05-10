@@ -27,7 +27,8 @@ class _HomePageState extends State<HomePage> {
       child: Scaffold(
         // title이 필요없어서 appBar를 지운다.
         // appBar: AppBar(),
-        body: Padding(padding: pagePadding, child : SafeArea(child: _pages[_currentIdx])),
+        body: Padding(
+            padding: pagePadding, child : SafeArea(child: _pages[_currentIdx])),
         floatingActionButton: FloatingActionButton(
           onPressed: _onAddMedicine,
           child: const Icon(CupertinoIcons.add),
